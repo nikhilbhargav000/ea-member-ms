@@ -1,0 +1,13 @@
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/controller/MemberController.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/model/Group.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/dao/GroupRepository.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/service/UserMgmntService.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/model/Member.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/model/ResponseMessage.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/exception/MemberRuntimeException.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/dao/MemberRepository.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/exception/MemberAppException.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/controller/GroupController.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/service/GroupMgmntService.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/exception/ErrorCode.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/MemberApp.java
