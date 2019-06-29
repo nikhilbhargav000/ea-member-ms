@@ -56,7 +56,6 @@ public class UserController {
 
         return new ResponseEntity<>(resMsg, status);
     }
-
     
 
     @RequestMapping(value= "/{appId}/users/{userId}", method = RequestMethod.GET)
@@ -73,10 +72,6 @@ public class UserController {
     public List<Member> findMembers(@PathVariable("appId") String appId){
         return userSrv.findUsers(appId);
     }
-    
-    
-    
-    
     
     
     

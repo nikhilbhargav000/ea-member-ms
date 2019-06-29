@@ -8,6 +8,5 @@ com/easyapper/member/MemberApp.class
 com/easyapper/member/model/ResponseMessage.class
 com/easyapper/member/service/UserMgmntService.class
 com/easyapper/member/dao/GroupRepository.class
-com/easyapper/member/controller/MemberController.class
 com/easyapper/member/model/Member.class
 com/easyapper/member/dao/MemberRepository.class
