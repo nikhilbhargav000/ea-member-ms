@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.3.RELEASE</version>
+        <version>2.1.6.RELEASE</version>
     </parent>
 
     <dependencies>
@@ -25,10 +25,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
@@ -37,6 +33,35 @@
             <artifactId>json-path</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- MongoDB -->
+       <!-- <dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-mongodb</artifactId>
+		    <version>2.1.9.RELEASE</version>
+		</dependency>
+		    
+		<dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-releasetrain</artifactId>
+		    <version>Lovelace-SR9</version>
+		    <type>pom</type>
+		    <scope>import</scope>
+		</dependency> -->
+		
+		
+       <!--  <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency> -->
+        
+        
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency> 
+		        
         
         <!-- Apache Commons -->
 		<dependency>
@@ -55,6 +80,12 @@
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>
 		    <version>3.9</version>
+		</dependency>
+		<!-- apache-common-chain --> 
+		<dependency>
+		    <groupId>commons-chain</groupId>
+		    <artifactId>commons-chain</artifactId>
+		    <version>1.2</version>
 		</dependency>
 		<!-- Lambok -->
 		<dependency>
@@ -84,7 +115,25 @@
             <id>spring-releases</id>
             <url>https://repo.spring.io/libs-release</url>
         </repository>
+        
+        
+        
+        <repository>
+            <id>spring-boot-starter-data-mongodb</id>
+            <url>https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb</url>
+        </repository>
+        
+        <!-- For MongoDB -->
+      <!-- <repository>
+	        <id>spring-milestones</id>
+	        <name>Spring Milestones</name>
+	        <url>https://repo.spring.io/milestone</url>
+	        <snapshots>
+	            <enabled>false</enabled>
+	        </snapshots>
+	    </repository> -->
     </repositories>
+    
     <pluginRepositories>
         <pluginRepository>
             <id>spring-releases</id>

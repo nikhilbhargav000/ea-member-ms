@@ -1,7 +1,7 @@
 package com.easyapper.member.exception;
 
 public enum ErrorCode {
-    NOT_FOUND(404), ALREADY_EXIST(409), BAD_REQUEST(400), SERVER_ERROR(500);
+    NOT_FOUND(404), ALREADY_EXIST(409), BAD_REQUEST(400), SERVER_ERROR(500), FORBIDDEN(403);
    
 	private int val;
 	

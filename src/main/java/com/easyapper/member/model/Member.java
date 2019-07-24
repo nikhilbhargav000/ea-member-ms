@@ -4,15 +4,17 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class Member {
 	@Id
 	private ObjectId id;
 	private String userId;
 	private String name;
-	private List<Group> groups = new ArrayList<>();
+	private Set<String> groupIds = new HashSet<>();
 
 	private long createdAt;
 	private boolean isActive;
@@ -33,12 +35,12 @@ public class Member {
 		this.userId = userId;
 	}
 
-	public List<Group> getGroups() {
-		return groups;
+	public Set<String> getGroupIds() {
+		return groupIds;
 	}
 
-	public void setGroups(List<Group> groups) {
-		this.groups = groups;
+	public void setGroupIds(Set<String> groupIds) {
+		this.groupIds = groupIds;
 	}
 
 	public String getName() {

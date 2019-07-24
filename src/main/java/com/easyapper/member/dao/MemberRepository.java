@@ -1,94 +1,129 @@
 package com.easyapper.member.dao;
 
-import com.easyapper.member.exception.ErrorCode;
-import com.easyapper.member.exception.MemberRuntimeException;
-import com.easyapper.member.model.Group;
-import com.easyapper.member.model.Member;
-import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
-import java.time.Instant;
-import java.util.List;
+import com.easyapper.member.exception.EAMemRuntimeException;
+import com.easyapper.member.exception.ErrorCode;
+import com.easyapper.member.model.Member;
+import com.easyapper.member.model.group.Group;
+import com.easyapper.member.util.EAMemConstants;
 
 @Repository
 public class MemberRepository {
-    private static final Logger log = LoggerFactory.getLogger(MemberRepository.class);
 
-    private final MongoOperations mongoTemplate;
+	private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    public MemberRepository(MongoOperations mongoTemplate){
-        this.mongoTemplate = mongoTemplate;
-    }
+	@Autowired
+	public MemberRepository(MongoTemplate mongoTemplate) {
+		this.mongoTemplate = mongoTemplate;
+	}
 
-    public List<Member> findMembers(String appId) {
-        Query aQuery = new Query();
-        aQuery.addCriteria(Criteria.where("isActive").is(true));
+	public static class DBKeys {
+		public static final String ID = "id";
+		public static final String GROUP_IDS = "groupIds";
+		public static final String IS_ACTIVE = "isActive";
+		public static final String NAME = "name";
+		public static final String USER_ID = "userId";
+		public static final String MEMBER_COLLECTION_POSTFIX = "_members";
+	}
 
-        return mongoTemplate.find(aQuery, Member.class, appId+"_members");
-    }
+	public List<Member> findMembers(String appId, Map<String, String> paramMap) {
+		Query aQuery = new Query();
 
-    public Member findMemberByUserId(String appId, String userId) {
-        if(appId == null || appId.isEmpty() || userId== null|| userId.isEmpty()){
-            throw new MemberRuntimeException(ErrorCode.BAD_REQUEST);
-        }
+		if (paramMap.containsKey(EAMemConstants.MEMBER_NAME_QUERY_PARAM)
+				&& StringUtils.isNotBlank(paramMap.get(EAMemConstants.MEMBER_NAME_QUERY_PARAM))) {
+			String value = paramMap.get(EAMemConstants.MEMBER_NAME_QUERY_PARAM);
+			Pattern alikeCaseInsentitvePattern = Pattern.compile(Pattern.quote(value.trim()), Pattern.CASE_INSENSITIVE);
+			Criteria[] criterias = { Criteria.where(DBKeys.IS_ACTIVE).is(true),
+					Criteria.where(DBKeys.NAME).regex(alikeCaseInsentitvePattern) };
+			Criteria criteria = new Criteria().andOperator(criterias);
+			aQuery.addCriteria(criteria);
+		} else {
+			aQuery.addCriteria(Criteria.where(DBKeys.IS_ACTIVE).is(true));
+		}
 
-        Query aQuery = new Query();
-        aQuery.addCriteria(Criteria.where("userId").is(userId).and("isActive").is(true));
+		return mongoTemplate.find(aQuery, Member.class, getCollectionName(appId));
+	}
 
-        return mongoTemplate.findOne(aQuery, Member.class, appId+"_members");
-    }
+	public Member findMemberByUserId(String appId, String userId) {
+		if (appId == null || appId.isEmpty() || userId == null || userId.isEmpty()) {
+			throw new EAMemRuntimeException(ErrorCode.BAD_REQUEST);
+		}
 
-    public Member createMember(String appId, Member user) {
-        if(appId == null || appId.isEmpty() || user == null ||
-                user.getUserId()== null || user.getUserId().isEmpty() ||
-                user.getName() == null || user.getName().isEmpty()){
-            throw new MemberRuntimeException(ErrorCode.BAD_REQUEST);
-        }
-        if(findMemberByUserId(appId, user.getUserId()) == null) {
-            user.setUserId(user.getUserId());
-            user.setActive(true);
-            user.setCreatedAt(Instant.now().getEpochSecond());
+		Query aQuery = new Query();
+		aQuery.addCriteria(Criteria.where(DBKeys.USER_ID).is(userId).and(DBKeys.IS_ACTIVE).is(true));
 
-            mongoTemplate.insert(user, appId+"_members");
-            return user;
-        }
-        throw new MemberRuntimeException(ErrorCode.ALREADY_EXIST);
-    }
+		return mongoTemplate.findOne(aQuery, Member.class, getCollectionName(appId));
+	}
 
-    public void updateMemberGroups(String appId, Member member) {
-        if( member == null || member.getId() == null || member.getGroups()== null  ){
-            throw new MemberRuntimeException(ErrorCode.BAD_REQUEST);
-        }
+	public Member createMember(String appId, Member user) {
+		if (appId == null || appId.isEmpty() || user == null || user.getUserId() == null || user.getUserId().isEmpty()
+				|| user.getName() == null || user.getName().isEmpty()) {
+			throw new EAMemRuntimeException(ErrorCode.BAD_REQUEST);
+		}
+		if (findMemberByUserId(appId, user.getUserId()) == null) {
+			user.setUserId(user.getUserId());
+			user.setActive(true);
+			user.setCreatedAt(Instant.now().getEpochSecond());
+			user.setGroupIds(new HashSet<>());
+			mongoTemplate.insert(user, getCollectionName(appId));
+			return user;
+		}
+		throw new EAMemRuntimeException(ErrorCode.ALREADY_EXIST);
+	}
 
-        Member aMember = findMemberByUserId(appId, member.getUserId());
-        aMember.getGroups().addAll(member.getGroups());
+	public void updateMember(String appId, Member member) {
+		if (member == null || member.getId() == null || member.getGroupIds() == null) {
+			throw new EAMemRuntimeException(ErrorCode.BAD_REQUEST);
+		}
+		mongoTemplate.save(member, getCollectionName(appId));
+	}
+	
+	public void updateMemberGroups(String appId, Member member) {
+		if (member == null || member.getId() == null || member.getGroupIds() == null) {
+			throw new EAMemRuntimeException(ErrorCode.BAD_REQUEST);
+		}
 
-        if( aMember != null) {
-            Query query = new Query();
-            query.addCriteria(Criteria.where("id").is(member.getId()).and("isActive").is(true));
+		Member aMember = this.findMemberByUserId(appId, member.getUserId());
+		aMember.getGroupIds().addAll(member.getGroupIds());
 
-            Update update = new Update();
-            update.set("groups", aMember.getGroups());
-            mongoTemplate.updateFirst(query, update, Member.class, appId+"_members");
-        }
-    }
+		if (aMember != null) {
+			Query query = new Query();
+			query.addCriteria(Criteria.where(DBKeys.ID).is(member.getId()).and(DBKeys.IS_ACTIVE).is(true));
 
-    public void addToMemberGroups(String appId, Member member, Group grp) {
-        if( member != null) {
-            Query query = new Query();
-            query.addCriteria(Criteria.where("id").is(member.getId()).and("isActive").is(true));
+			Update update = new Update();
+			update.set(DBKeys.GROUP_IDS, aMember.getGroupIds());
+			mongoTemplate.updateFirst(query, update, Member.class, getCollectionName(appId));
+		}
+	}
 
-            Update update = new Update();
-            update.push("groups", grp);
-            mongoTemplate.updateFirst(query, update, Member.class, appId+"_members");
-        }
-    }
+	public void addToMemberGroups(String appId, Member member, Group grp) {
+		if (member != null) {
+			Query query = new Query();
+			query.addCriteria(Criteria.where(DBKeys.ID).is(member.getId()).and(DBKeys.IS_ACTIVE).is(true));
+
+			Update update = new Update();
+			update.push(DBKeys.GROUP_IDS, grp);
+			mongoTemplate.updateFirst(query, update, Member.class, getCollectionName(appId));
+		}
+	}
+	
+	public String getCollectionName(String appId) {
+		if (appId == null) {
+			return null;
+		}
+		return appId + DBKeys.MEMBER_COLLECTION_POSTFIX;
+	}
 }
