@@ -6,6 +6,7 @@ import java.util.Set;
 import com.easyapper.member.model.InvitationStatus;
 import com.easyapper.member.model.group.Group;
 import com.easyapper.member.model.group.GroupMember;
+import com.easyapper.member.model.group.GroupMemberRole;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -23,6 +24,9 @@ public class CommandOperationRequest {
 	
 	private Set<GroupMember> addGroupForMembers;
 	private Set<String> removeGroupForMembers;
+	
+	private List<String> updateGroupRoleUserIds;
+	private GroupMemberRole updateGroupMemberRole;
 	
 	private Group group;
 	
@@ -82,6 +86,18 @@ public class CommandOperationRequest {
 	}
 	public void setSetupInviteUserIds(List<String> setupInviteUserIds) {
 		this.setupInviteUserIds = setupInviteUserIds;
+	}
+	public List<String> getUpdateGroupRoleUserIds() {
+		return updateGroupRoleUserIds;
+	}
+	public void setUpdateGroupRoleUserIds(List<String> updateGroupRoleUserIds) {
+		this.updateGroupRoleUserIds = updateGroupRoleUserIds;
+	}
+	public GroupMemberRole getUpdateGroupMemberRole() {
+		return updateGroupMemberRole;
+	}
+	public void setUpdateGroupMemberRole(GroupMemberRole updateGroupMemberRole) {
+		this.updateGroupMemberRole = updateGroupMemberRole;
 	}
 	
 }

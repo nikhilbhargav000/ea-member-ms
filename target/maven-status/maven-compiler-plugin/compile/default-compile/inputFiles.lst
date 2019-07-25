@@ -31,6 +31,7 @@
 /Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/model/group/GroupType.java
 /Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/service/command/IsMemberOfGroupCommand.java
 /Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/model/Invitation.java
+/Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/service/command/UpdateGroupRoleCommand.java
 /Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/controller/InvitationController.java
 /Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/controller/UserController.java
 /Users/nikhil/Documents/eclipse-workspace/EasyApper/ea-member-ms/src/main/java/com/easyapper/member/exception/EAMemExceptionHandler.java

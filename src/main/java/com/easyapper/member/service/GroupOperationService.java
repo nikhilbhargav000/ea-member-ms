@@ -14,6 +14,7 @@ import com.easyapper.member.exception.EAMemRuntimeException;
 import com.easyapper.member.exception.ErrorCode;
 import com.easyapper.member.model.InvitationStatus;
 import com.easyapper.member.model.ResponseMessage;
+import com.easyapper.member.model.group.GroupMemberRole;
 import com.easyapper.member.model.group.GroupOperation;
 import com.easyapper.member.model.group.GroupOperationRequest;
 import com.easyapper.member.operation.CommandContext;
@@ -25,6 +26,7 @@ import com.easyapper.member.service.command.IsMemberOfGroupCommand;
 import com.easyapper.member.service.command.RemoveGroupForMemberCommand;
 import com.easyapper.member.service.command.SendInvitationCommand;
 import com.easyapper.member.service.command.SetupInviteGroupMemberCommand;
+import com.easyapper.member.service.command.UpdateGroupRoleCommand;
 import com.easyapper.member.service.command.UpdateInvitationCommand;
 import com.easyapper.member.service.command.ValidateGroupOperationRequestCommand;
 
@@ -93,10 +95,10 @@ public class GroupOperationService {
 			response = removeFromGroup(appId, userId, groupId, operationRequest);
 			break;
 		case REVOKE_ADMIN_ROLE:
-
+			response = revokeAdminRole(appId, userId, groupId, operationRequest);
 			break;
 		case GRANT_ADMIN_ROLE:
-
+			response = grantAdminRole(appId, userId, groupId, operationRequest);
 			break;
 		}
 
@@ -111,6 +113,58 @@ public class GroupOperationService {
 		return operation;
 	}
 
+
+	private ResponseMessage revokeAdminRole(final String appId, final String userId, final String groupId,
+			GroupOperationRequest operationRequest) throws Exception {
+		
+		CommandOperationRequest contextRequest = new CommandOperationRequest();
+		contextRequest.setAppId(appId);
+		contextRequest.setUserId(userId);
+		contextRequest.setGroupId(groupId);
+		
+		contextRequest.setUpdateGroupRoleUserIds(operationRequest.getTargetUserIds());
+		contextRequest.setUpdateGroupMemberRole(GroupMemberRole.USER);
+
+		// Execute Chain
+		ChainBase chainBase = new ChainBase();
+		
+		chainBase.addCommand(appContext.getBean(ValidateGroupOperationRequestCommand.class));
+		chainBase.addCommand(appContext.getBean(CheckAdminAccessCommand.class));
+		chainBase.addCommand(appContext.getBean(UpdateGroupRoleCommand.class));
+
+		CommandContext context = new CommandContext();
+		context.setContextRequest(contextRequest);
+		context.setContextResponse(new ResponseMessage());
+		chainBase.execute(context);
+
+		return context.getContextResponse();
+	}
+	private ResponseMessage grantAdminRole(final String appId, final String userId, final String groupId,
+			GroupOperationRequest operationRequest) throws Exception {
+		
+		CommandOperationRequest contextRequest = new CommandOperationRequest();
+		contextRequest.setAppId(appId);
+		contextRequest.setUserId(userId);
+		contextRequest.setGroupId(groupId);
+		
+		contextRequest.setUpdateGroupRoleUserIds(operationRequest.getTargetUserIds());
+		contextRequest.setUpdateGroupMemberRole(GroupMemberRole.ADMIN);
+
+		// Execute Chain
+		ChainBase chainBase = new ChainBase();
+		
+		chainBase.addCommand(appContext.getBean(ValidateGroupOperationRequestCommand.class));
+		chainBase.addCommand(appContext.getBean(CheckAdminAccessCommand.class));
+		chainBase.addCommand(appContext.getBean(UpdateGroupRoleCommand.class));
+
+		CommandContext context = new CommandContext();
+		context.setContextRequest(contextRequest);
+		context.setContextResponse(new ResponseMessage());
+		chainBase.execute(context);
+
+		return context.getContextResponse();
+	}
+	
 	private ResponseMessage inviteToGroup(final String appId, final String userId, final String groupId,
 			GroupOperationRequest operationRequest) throws Exception {
 		
