@@ -22,6 +22,7 @@ import com.easyapper.member.operation.CommandOperationRequest;
 import com.easyapper.member.service.command.AddGroupForMemberCommand;
 import com.easyapper.member.service.command.CheckAdminAccessCommand;
 import com.easyapper.member.service.command.CheckInvitationExistCommand;
+import com.easyapper.member.service.command.GroupAdminExistCheckCommand;
 import com.easyapper.member.service.command.IsMemberOfGroupCommand;
 import com.easyapper.member.service.command.RemoveGroupForMemberCommand;
 import com.easyapper.member.service.command.SendInvitationCommand;
@@ -211,6 +212,7 @@ public class GroupOperationService {
 		chainBase.addCommand(appContext.getBean(ValidateGroupOperationRequestCommand.class));
 		chainBase.addCommand(appContext.getBean(CheckAdminAccessCommand.class));
 		chainBase.addCommand(appContext.getBean(RemoveGroupForMemberCommand.class));
+		chainBase.addCommand(appContext.getBean(GroupAdminExistCheckCommand.class));
 
 		CommandContext context = new CommandContext();
 		context.setContextRequest(contextRequest);
@@ -237,6 +239,7 @@ public class GroupOperationService {
 		chainBase.addCommand(appContext.getBean(ValidateGroupOperationRequestCommand.class));
 		chainBase.addCommand(appContext.getBean(IsMemberOfGroupCommand.class));
 		chainBase.addCommand(appContext.getBean(RemoveGroupForMemberCommand.class));
+		chainBase.addCommand(appContext.getBean(GroupAdminExistCheckCommand.class));
 
 		CommandContext context = new CommandContext();
 		context.setContextRequest(contextRequest);

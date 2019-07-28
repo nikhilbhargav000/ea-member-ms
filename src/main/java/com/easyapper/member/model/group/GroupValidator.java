@@ -1,9 +1,11 @@
 package com.easyapper.member.model.group;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.easyapper.member.dao.GroupRepository;
 import com.easyapper.member.dao.InvitationRepository;
 import com.easyapper.member.dao.MemberRepository;
 import com.easyapper.member.exception.EAMemRuntimeException;
@@ -16,15 +18,17 @@ import com.easyapper.member.model.Member;
 public class GroupValidator {
 
 	private final MemberRepository memberRepo;
+	private final GroupRepository groupRepo;
 	private final InvitationRepository invitationRepo;
 	
 	@Autowired
-	public GroupValidator(MemberRepository memberRepo, InvitationRepository invitationRepo) {
+	public GroupValidator(MemberRepository memberRepo, GroupRepository groupRepo, InvitationRepository invitationRepo) {
 		super();
 		this.memberRepo = memberRepo;
+		this.groupRepo = groupRepo;
 		this.invitationRepo = invitationRepo;
 	}
-
+	
 	public boolean isValidGroupMemberRole(String role) {
 		if (StringUtils.isBlank(role)) {
 			return false;
@@ -35,7 +39,7 @@ public class GroupValidator {
 		}
 		return false;
 	}
-	
+
 	public boolean isValidGroupType(String groupType) {
 		if (StringUtils.isBlank(groupType)) {
 			return false;
@@ -76,6 +80,21 @@ public class GroupValidator {
 		
 		if (member.getGroupIds() != null && member.getGroupIds().contains(groupId)) {
 			return true;
+		}
+		return false;
+	}
+	
+	public boolean adminExistInGroup(String appId, String groupId) {
+		Group group = groupRepo.findGroup(appId, groupId);
+		if (group == null) {
+			throw new EAMemRuntimeException(ErrorCode.BAD_REQUEST);
+		}
+		if (CollectionUtils.isNotEmpty(group.getMembers())) {
+			for (GroupMember groupMember : group.getMembers()) {
+				if (groupMember.getRole().equals(GroupMemberRole.ADMIN.toString())) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}

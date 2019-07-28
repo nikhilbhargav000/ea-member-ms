@@ -19,7 +19,7 @@ import com.easyapper.member.operation.CommandContext;
 import com.easyapper.member.operation.CommandOperationRequest;
 
 /**
- * Add the members for the specific group
+ * Remove the members for the specific group
  * @author nikhil
  */
 @Component
